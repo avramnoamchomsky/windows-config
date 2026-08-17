@@ -15,7 +15,7 @@
 | 软件包 | 通过 WinGet 安装 22 个核心、桌面和命令行软件包，并保持最新版本 | 已实现 |
 | 系统 | 通过 `LongPathsEnabled` 启用 Win32 长路径支持 | 已实现 |
 | WSL | 安装 WSL 2 平台，但不选择或修改 Linux 发行版 | 已实现 |
-| 用户 | 托管的 PowerShell 偏好设置和不含敏感信息的全局 Git 设置 | 已实现 |
+| 用户 | 托管的 PowerShell 和 Git 偏好设置，以及可选的小鹤双拼配置脚本 | 已实现 |
 | 开发人员模式 | 不由本仓库管理 | 有意如此 |
 | Hyper-V、Sandbox、Containers | 不由本仓库启用 | 有意如此 |
 
@@ -34,6 +34,8 @@ windows-config/
 ├── home/
 │   ├── git/
 │   │   └── manage-git.ps1     # 管理不含敏感信息的全局 Git 设置
+│   ├── input-method/
+│   │   └── set-xiaohe-double-pinyin.ps1 # 手动配置微软拼音
 │   ├── powershell/
 │   │   ├── manage-profile.ps1 # 部署并检查配置文件加载器
 │   │   └── profile.ps1        # 跨宿主的托管配置文件
@@ -103,6 +105,16 @@ Set-Location "$env:USERPROFILE\projects\windows-config"
 `-Clean` 会先删除现有目标目录再进行复制，因此不要在本地执行副本中保留未提交的工作。映射驱动器上的工作树仍是编辑和执行 Git 操作的唯一配置源。
 
 完整工作流程和故障排除说明请参阅[操作指南](docs/operations.md)。
+
+## 可选的输入法配置
+
+安装并启用微软中文输入法后，请从本地执行副本中手动运行：
+
+```powershell
+.\home\input-method\set-xiaohe-double-pinyin.ps1
+```
+
+该脚本会以幂等方式将当前用户的自定义双拼方案配置为小鹤双拼。由于必须先安装并启用输入法，因此该操作有意不包含在 `apply.ps1` 中。
 
 ## 脚本参考
 

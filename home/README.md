@@ -77,6 +77,23 @@ To stop managing a key, remove it from `$DesiredSettings` and decide explicitly 
 git config --global --unset-all <key>
 ```
 
+## Microsoft Pinyin
+
+`input-method/set-xiaohe-double-pinyin.ps1` configures the current user's first custom double-pinyin scheme as Xiaohe. Run it manually only after the Microsoft Chinese input method has been installed and enabled:
+
+```powershell
+.\home\input-method\set-xiaohe-double-pinyin.ps1
+```
+
+The script writes and verifies this user-scoped registry value:
+
+```text
+HKCU\Software\Microsoft\InputMethod\Settings\CHS
+UserDefinedDoublePinyinScheme0 = 小鹤双拼*2*^*iuvdjhcwfg^xmlnpbksqszxkrltvyovt (REG_SZ)
+```
+
+Running the script again is safe. It exits without writing when the value is already correct. This optional step is not called by the main apply or check workflows because the input method is an external prerequisite.
+
 ## Future areas
 
 Candidate additions include Windows Terminal settings, VS Code settings and extensions, Explorer preferences, and application-specific user settings. A setting should only be added after its desired value, merge behavior, and recovery path are known. Secrets and machine-specific credentials must remain outside the repository.

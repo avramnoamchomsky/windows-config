@@ -59,6 +59,14 @@ The copy includes hidden entries such as `.config` and `.git`. Without `-Clean`,
 
 After the first application of newly added command-line packages, open a new PowerShell session so it receives any PATH changes made by WinGet. Installing Starship and zoxide does not automatically enable their shell integrations; those remain explicit profile decisions.
 
+After installing and enabling the Microsoft Chinese input method, optionally configure Xiaohe double pinyin from the local execution copy:
+
+```powershell
+.\home\input-method\set-xiaohe-double-pinyin.ps1
+```
+
+This is a current-user registry change and does not require elevation. It is deliberately manual and is not part of `apply.ps1` or `check.ps1`.
+
 > **Warning:** `-Clean` deletes the destination tree. The script refuses to use the source itself as the destination, but the destination must still be treated as disposable.
 
 To use a different local destination:

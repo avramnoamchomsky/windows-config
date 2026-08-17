@@ -15,7 +15,7 @@ The configuration currently manages:
 | Packages | 22 core, desktop, and command-line packages are installed from WinGet and kept current | Implemented |
 | System | Win32 long-path support is enabled through `LongPathsEnabled` | Implemented |
 | WSL | WSL 2 platform installed without selecting or modifying a Linux distribution | Implemented |
-| Home | Managed PowerShell preferences and non-sensitive global Git settings | Implemented |
+| Home | Managed PowerShell and Git preferences, plus an optional Xiaohe double-pinyin setup script | Implemented |
 | Developer Mode | Left unmanaged | Intentional |
 | Hyper-V, Sandbox, Containers | Not enabled by this repository | Intentional |
 
@@ -34,6 +34,8 @@ windows-config/
 ├── home/
 │   ├── git/
 │   │   └── manage-git.ps1     # manage non-sensitive global Git settings
+│   ├── input-method/
+│   │   └── set-xiaohe-double-pinyin.ps1 # manually configure Microsoft Pinyin
 │   ├── powershell/
 │   │   ├── manage-profile.ps1 # deploy and test profile loaders
 │   │   └── profile.ps1        # managed cross-host profile
@@ -103,6 +105,16 @@ Set-Location "$env:USERPROFILE\projects\windows-config"
 `-Clean` removes the existing destination before copying, so do not keep uncommitted work in the local execution copy. The mapped-drive working tree remains the source of truth for editing and Git operations.
 
 See [Operations](docs/operations.md) for the full workflow and troubleshooting notes.
+
+## Optional input-method setup
+
+After installing and enabling the Microsoft Chinese input method, run the following command manually from the local execution copy:
+
+```powershell
+.\home\input-method\set-xiaohe-double-pinyin.ps1
+```
+
+The script idempotently configures the current user's custom double-pinyin scheme as Xiaohe. It is intentionally excluded from `apply.ps1` because input-method installation and activation must happen first.
 
 ## Script reference
 
