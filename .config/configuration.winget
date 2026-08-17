@@ -63,6 +63,15 @@ resources:
       description: Install Everything search
 
   - type: Microsoft.WinGet/Package
+    name: BulkCrapUninstaller
+    properties:
+      id: Klocman.BulkCrapUninstaller
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install Bulk Crap Uninstaller
+
+  - type: Microsoft.WinGet/Package
     name: GoogleChrome
     properties:
       id: Google.Chrome

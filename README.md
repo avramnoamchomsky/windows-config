@@ -12,7 +12,7 @@ The configuration currently manages:
 
 | Area | Desired state | Status |
 | --- | --- | --- |
-| Packages | 22 core, desktop, and command-line packages are installed from WinGet and kept current | Implemented |
+| Packages | 23 core, desktop, and command-line packages are installed from WinGet and kept current | Implemented |
 | System | Win32 long-path support is enabled through `LongPathsEnabled` | Implemented |
 | WSL | WSL 2 platform installed without selecting or modifying a Linux distribution | Implemented |
 | Home | Managed PowerShell and Git preferences, plus an optional Xiaohe double-pinyin setup script | Implemented |

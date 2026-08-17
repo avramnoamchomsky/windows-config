@@ -17,6 +17,7 @@
 | --- | --- | --- |
 | 7-Zip | `7zip.7zip` | Archive management |
 | Everything | `voidtools.Everything` | Fast file-name search |
+| Bulk Crap Uninstaller | `Klocman.BulkCrapUninstaller` | Application removal and leftover cleanup |
 | Google Chrome | `Google.Chrome` | Web browser |
 | Tencent QQ | `Tencent.QQ.NT` | Messaging |
 | Tencent WeChat | `Tencent.WeChat.Universal` | Messaging |
