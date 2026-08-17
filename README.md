@@ -20,6 +20,34 @@ The configuration currently manages:
 
 The complete implemented state is visible in [`.config/configuration.winget`](.config/configuration.winget). Review that file before applying it: the apply script accepts the WinGet configuration agreement non-interactively, and one resource requests elevation to write to `HKLM`.
 
+## Repository layout
+
+```text
+windows-config/
+├── .config/
+│   └── configuration.winget   # WinGet/DSC desired state
+├── docs/
+│   ├── architecture.md        # design decisions and scope
+│   └── operations.md          # apply, check, and staging workflows
+├── home/
+│   └── README.md              # policy for future per-user state
+├── scripts/
+│   ├── apply.ps1              # apply desired state
+│   ├── assert-prerequisites.ps1 # verify Windows, WinGet, and WSL CLI
+│   ├── bootstrap.ps1          # stage locally when needed, then apply
+│   ├── check.ps1              # test current state for conformance
+│   └── copy-local.ps1         # create/update a local execution copy
+├── system/
+│   ├── README.md              # machine-wide configuration notes
+│   └── wsl.ps1                # idempotent WSL 2 platform state
+├── .gitignore
+├── LICENSE
+├── README.md
+└── README.zh-CN.md
+```
+
+Machine-wide settings belong under `system/`; per-user settings and dotfiles belong under `home/`. See [Architecture](docs/architecture.md) for the ownership boundaries.
+
 ## Requirements
 
 - Windows 11
@@ -70,34 +98,6 @@ For a one-command stage-and-apply flow, run:
 By default, `bootstrap.ps1` replaces `%USERPROFILE%\projects\windows-config` with a fresh copy when invoked elsewhere, then applies from that local path. A different destination can be supplied with `-LocalRepo`.
 
 See [Operations](docs/operations.md) for the full workflow and troubleshooting notes.
-
-## Repository layout
-
-```text
-windows-config/
-├── .config/
-│   └── configuration.winget   # WinGet/DSC desired state
-├── docs/
-│   ├── architecture.md        # design decisions and scope
-│   └── operations.md          # apply, check, and staging workflows
-├── home/
-│   └── README.md              # policy for future per-user state
-├── scripts/
-│   ├── apply.ps1              # apply desired state
-│   ├── assert-prerequisites.ps1 # verify Windows, WinGet, and WSL CLI
-│   ├── bootstrap.ps1          # stage locally when needed, then apply
-│   ├── check.ps1              # test current state for conformance
-│   └── copy-local.ps1         # create/update a local execution copy
-├── system/
-│   ├── README.md              # machine-wide configuration notes
-│   └── wsl.ps1                # idempotent WSL 2 platform state
-├── .gitignore
-├── LICENSE
-├── README.md
-└── README.zh-CN.md
-```
-
-Machine-wide settings belong under `system/`; per-user settings and dotfiles belong under `home/`. See [Architecture](docs/architecture.md) for the ownership boundaries.
 
 ## Script reference
 

@@ -20,6 +20,34 @@
 
 所有已实现的目标状态均可在 [`.config/configuration.winget`](.config/configuration.winget) 中查看。应用配置前请先审查该文件：应用脚本会以非交互方式接受 WinGet 配置协议，并且其中一个资源会请求提升权限以写入 `HKLM`。
 
+## 仓库结构
+
+```text
+windows-config/
+├── .config/
+│   └── configuration.winget   # WinGet/DSC 目标状态
+├── docs/
+│   ├── architecture.md        # 设计决策与范围
+│   └── operations.md          # 应用、检查及暂存工作流程
+├── home/
+│   └── README.md              # 未来用户级状态的管理原则
+├── scripts/
+│   ├── apply.ps1              # 应用目标状态
+│   ├── assert-prerequisites.ps1 # 检查 Windows、WinGet 和 WSL CLI
+│   ├── bootstrap.ps1          # 必要时暂存到本地，然后应用
+│   ├── check.ps1              # 检查当前状态是否符合配置
+│   └── copy-local.ps1         # 创建或更新本地执行副本
+├── system/
+│   ├── README.md              # 计算机级配置说明
+│   └── wsl.ps1                # 幂等的 WSL 2 平台状态
+├── .gitignore
+├── LICENSE
+├── README.md
+└── README.zh-CN.md
+```
+
+计算机范围的设置归入 `system/`；用户级设置和 dotfiles 则归入 `home/`。关于各层的职责边界，请参阅[架构说明](docs/architecture.md)。
+
 ## 环境要求
 
 - Windows 11
@@ -70,34 +98,6 @@ cd "$env:USERPROFILE\projects\windows-config"
 默认情况下，如果从其他位置调用 `bootstrap.ps1`，它会使用全新副本替换 `%USERPROFILE%\projects\windows-config`，然后从该本地路径应用配置。可以通过 `-LocalRepo` 指定其他目标路径。
 
 完整工作流程和故障排除说明请参阅[操作指南](docs/operations.md)。
-
-## 仓库结构
-
-```text
-windows-config/
-├── .config/
-│   └── configuration.winget   # WinGet/DSC 目标状态
-├── docs/
-│   ├── architecture.md        # 设计决策与范围
-│   └── operations.md          # 应用、检查及暂存工作流程
-├── home/
-│   └── README.md              # 未来用户级状态的管理原则
-├── scripts/
-│   ├── apply.ps1              # 应用目标状态
-│   ├── assert-prerequisites.ps1 # 检查 Windows、WinGet 和 WSL CLI
-│   ├── bootstrap.ps1          # 必要时暂存到本地，然后应用
-│   ├── check.ps1              # 检查当前状态是否符合配置
-│   └── copy-local.ps1         # 创建或更新本地执行副本
-├── system/
-│   ├── README.md              # 计算机级配置说明
-│   └── wsl.ps1                # 幂等的 WSL 2 平台状态
-├── .gitignore
-├── LICENSE
-├── README.md
-└── README.zh-CN.md
-```
-
-计算机范围的设置归入 `system/`；用户级设置和 dotfiles 则归入 `home/`。关于各层的职责边界，请参阅[架构说明](docs/architecture.md)。
 
 ## 脚本参考
 
