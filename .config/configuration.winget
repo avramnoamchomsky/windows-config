@@ -145,6 +145,15 @@ resources:
 
   # Command-line tools
   - type: Microsoft.WinGet/Package
+    name: Btop
+    properties:
+      id: aristocratos.btop4win
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install btop for Windows
+
+  - type: Microsoft.WinGet/Package
     name: Ripgrep
     properties:
       id: BurntSushi.ripgrep.MSVC

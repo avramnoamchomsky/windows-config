@@ -33,6 +33,7 @@ MSYS2 uses `useLatest: false` because its WinGet manifest has `UpgradeBehavior: 
 
 | Package | WinGet ID | Purpose |
 | --- | --- | --- |
+| btop | `aristocratos.btop4win` | Interactive system and process monitor |
 | ripgrep | `BurntSushi.ripgrep.MSVC` | Recursive text search |
 | fd | `sharkdp.fd` | File-system search |
 | bat | `sharkdp.bat` | Syntax-aware file viewer |
