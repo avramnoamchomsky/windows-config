@@ -39,10 +39,11 @@ function Get-WslState {
     $DefaultVersion = 2
 
     if (Test-Path -LiteralPath $LxssRegistryPath) {
-        $ConfiguredVersion = Get-ItemPropertyValue `
+        $RegistryState = Get-ItemProperty `
             -LiteralPath $LxssRegistryPath `
-            -Name $DefaultVersionValue `
-            -ErrorAction SilentlyContinue
+            -ErrorAction Stop
+
+        $ConfiguredVersion = $RegistryState.$DefaultVersionValue
 
         if ($null -ne $ConfiguredVersion) {
             $DefaultVersion = [int]$ConfiguredVersion
