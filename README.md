@@ -1,5 +1,7 @@
 # windows-config
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 Declarative configuration for a personal Windows 11 development environment.
 
 The repository combines [WinGet Configuration](https://learn.microsoft.com/windows/package-manager/configuration/) with DSC resources and small, idempotent PowerShell helpers. The goal is a machine definition that is reviewable, repeatable, and safe to keep in a public Git repository.
@@ -83,7 +85,8 @@ windows-config/
 │   └── copy-local.ps1         # create/update a local execution copy
 ├── .gitignore
 ├── LICENSE
-└── README.md
+├── README.md
+└── README.zh-CN.md
 ```
 
 Machine-wide settings belong conceptually under `system/`; per-user settings and dotfiles belong under `home/`. Those areas will be added when they contain implemented configuration. See [Architecture](docs/architecture.md) for the boundaries and planned WSL work.
