@@ -42,16 +42,22 @@ UAC elevation can create a logon context that does not share drive-letter mappin
 Keep editing on the canonical mapped-drive checkout, but copy the repository to a local fixed drive for execution:
 
 ```powershell
-cd Y:\path\to\windows-config
-.\scripts\copy-local.ps1 -Clean
+Set-Location Y:\projects\windows-config
 
-cd "$env:USERPROFILE\projects\windows-config"
+.\scripts\copy-local.ps1 `
+    -Destination "$env:USERPROFILE\projects\windows-config" `
+    -Clean
+
+Set-Location "$env:USERPROFILE\projects\windows-config"
+
 .\scripts\check.ps1
 .\scripts\apply.ps1
 .\scripts\check.ps1
 ```
 
 The copy includes hidden entries such as `.config` and `.git`. Without `-Clean`, existing files are overwritten but stale destination-only files remain. With `-Clean`, the entire destination is removed first and becomes an exact fresh copy.
+
+After the first application of newly added command-line packages, open a new PowerShell session so it receives any PATH changes made by WinGet. Installing Starship and zoxide does not automatically enable their shell integrations; those remain explicit profile decisions.
 
 > **Warning:** `-Clean` deletes the destination tree. The script refuses to use the source itself as the destination, but the destination must still be treated as disposable.
 

@@ -6,6 +6,7 @@ metadata:
       identifier: dscv3
 
 resources:
+  # Core development tools
   - type: Microsoft.WinGet/Package
     name: Git
     properties:
@@ -41,6 +42,170 @@ resources:
       useLatest: true
     metadata:
       description: Install Windows Terminal
+
+  # Desktop applications
+  - type: Microsoft.WinGet/Package
+    name: 7Zip
+    properties:
+      id: 7zip.7zip
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install 7-Zip
+
+  - type: Microsoft.WinGet/Package
+    name: Everything
+    properties:
+      id: voidtools.Everything
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install Everything search
+
+  - type: Microsoft.WinGet/Package
+    name: GoogleChrome
+    properties:
+      id: Google.Chrome
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install Google Chrome
+
+  - type: Microsoft.WinGet/Package
+    name: TencentQQ
+    properties:
+      id: Tencent.QQ.NT
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install Tencent QQ
+
+  - type: Microsoft.WinGet/Package
+    name: TencentWeChat
+    properties:
+      id: Tencent.WeChat.Universal
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install Tencent WeChat
+
+  - type: Microsoft.WinGet/Package
+    name: Mpv
+    properties:
+      id: shinchiro.mpv
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install mpv media player
+
+  - type: Microsoft.WinGet/Package
+    name: DiskGenius
+    properties:
+      id: Eassos.DiskGenius
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install DiskGenius
+
+  - type: Microsoft.WinGet/Package
+    name: CrystalDiskMarkAoiEdition
+    properties:
+      id: CrystalDewWorld.CrystalDiskMark.AoiEdition
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install CrystalDiskMark Aoi Edition
+
+  # Command-line tools
+  - type: Microsoft.WinGet/Package
+    name: Ripgrep
+    properties:
+      id: BurntSushi.ripgrep.MSVC
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install ripgrep
+
+  - type: Microsoft.WinGet/Package
+    name: Fd
+    properties:
+      id: sharkdp.fd
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install fd
+
+  - type: Microsoft.WinGet/Package
+    name: Bat
+    properties:
+      id: sharkdp.bat
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install bat
+
+  - type: Microsoft.WinGet/Package
+    name: Fzf
+    properties:
+      id: junegunn.fzf
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install fzf
+
+  - type: Microsoft.WinGet/Package
+    name: Zoxide
+    properties:
+      id: ajeetdsouza.zoxide
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install zoxide
+
+  - type: Microsoft.WinGet/Package
+    name: Eza
+    properties:
+      id: eza-community.eza
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install eza
+
+  - type: Microsoft.WinGet/Package
+    name: Jq
+    properties:
+      id: jqlang.jq
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install jq
+
+  - type: Microsoft.WinGet/Package
+    name: Yq
+    properties:
+      id: MikeFarah.yq
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install yq
+
+  - type: Microsoft.WinGet/Package
+    name: Fastfetch
+    properties:
+      id: Fastfetch-cli.Fastfetch
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install Fastfetch
+
+  - type: Microsoft.WinGet/Package
+    name: Starship
+    properties:
+      id: Starship.Starship
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install Starship
 
   - type: Microsoft.Windows/Registry
     name: EnableLongPaths

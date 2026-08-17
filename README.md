@@ -12,14 +12,14 @@ The configuration currently manages:
 
 | Area | Desired state | Status |
 | --- | --- | --- |
-| Packages | Git, PowerShell 7, Visual Studio Code, and Windows Terminal are installed from WinGet and kept current | Implemented |
+| Packages | 22 core, desktop, and command-line packages are installed from WinGet and kept current | Implemented |
 | System | Win32 long-path support is enabled through `LongPathsEnabled` | Implemented |
 | WSL | WSL 2 platform installed without selecting or modifying a Linux distribution | Implemented |
 | Home | Managed PowerShell preferences and non-sensitive global Git settings | Implemented |
 | Developer Mode | Left unmanaged | Intentional |
 | Hyper-V, Sandbox, Containers | Not enabled by this repository | Intentional |
 
-The complete implemented state is visible in [`.config/configuration.winget`](.config/configuration.winget). Review that file before applying it: the apply script accepts the WinGet configuration agreement non-interactively, and one resource requests elevation to write to `HKLM`.
+The full software inventory is documented in the [package catalog](docs/packages.md), and the implemented state is visible in [`.config/configuration.winget`](.config/configuration.winget). Review that file before applying it: the apply script accepts the WinGet configuration agreement non-interactively, and one resource requests elevation to write to `HKLM`.
 
 ## Repository layout
 
@@ -29,7 +29,8 @@ windows-config/
 │   └── configuration.winget   # WinGet/DSC desired state
 ├── docs/
 │   ├── architecture.md        # design decisions and scope
-│   └── operations.md          # apply, check, and staging workflows
+│   ├── operations.md          # apply, check, and staging workflows
+│   └── packages.md            # managed software catalog
 ├── home/
 │   ├── git/
 │   │   └── manage-git.ps1     # manage non-sensitive global Git settings
@@ -86,22 +87,20 @@ If enabling WSL requires a restart, `apply.ps1` returns exit code `3010`. Restar
 An elevated DSC resource may be unable to access a drive letter mapped in the normal user session. If the canonical working tree is on a mapped or network drive, stage an execution copy on the local system drive first:
 
 ```powershell
-.\scripts\copy-local.ps1 -Clean
-cd "$env:USERPROFILE\projects\windows-config"
+Set-Location Y:\projects\windows-config
+
+.\scripts\copy-local.ps1 `
+    -Destination "$env:USERPROFILE\projects\windows-config" `
+    -Clean
+
+Set-Location "$env:USERPROFILE\projects\windows-config"
+
 .\scripts\check.ps1
 .\scripts\apply.ps1
 .\scripts\check.ps1
 ```
 
 `-Clean` removes the existing destination before copying, so do not keep uncommitted work in the local execution copy. The mapped-drive working tree remains the source of truth for editing and Git operations.
-
-For a one-command stage-and-apply flow, run:
-
-```powershell
-.\scripts\bootstrap.ps1
-```
-
-By default, `bootstrap.ps1` replaces `%USERPROFILE%\projects\windows-config` with a fresh copy when invoked elsewhere, then applies from that local path. A different destination can be supplied with `-LocalRepo`.
 
 See [Operations](docs/operations.md) for the full workflow and troubleshooting notes.
 

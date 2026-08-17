@@ -12,14 +12,14 @@
 
 | 范围 | 目标状态 | 状态 |
 | --- | --- | --- |
-| 软件包 | 通过 WinGet 安装 Git、PowerShell 7、Visual Studio Code 和 Windows Terminal，并保持最新版本 | 已实现 |
+| 软件包 | 通过 WinGet 安装 22 个核心、桌面和命令行软件包，并保持最新版本 | 已实现 |
 | 系统 | 通过 `LongPathsEnabled` 启用 Win32 长路径支持 | 已实现 |
 | WSL | 安装 WSL 2 平台，但不选择或修改 Linux 发行版 | 已实现 |
 | 用户 | 托管的 PowerShell 偏好设置和不含敏感信息的全局 Git 设置 | 已实现 |
 | 开发人员模式 | 不由本仓库管理 | 有意如此 |
 | Hyper-V、Sandbox、Containers | 不由本仓库启用 | 有意如此 |
 
-所有已实现的目标状态均可在 [`.config/configuration.winget`](.config/configuration.winget) 中查看。应用配置前请先审查该文件：应用脚本会以非交互方式接受 WinGet 配置协议，并且其中一个资源会请求提升权限以写入 `HKLM`。
+完整的软件清单记录在[软件包目录](docs/packages.md)中，所有已实现的目标状态均可在 [`.config/configuration.winget`](.config/configuration.winget) 中查看。应用配置前请先审查该文件：应用脚本会以非交互方式接受 WinGet 配置协议，并且其中一个资源会请求提升权限以写入 `HKLM`。
 
 ## 仓库结构
 
@@ -29,7 +29,8 @@ windows-config/
 │   └── configuration.winget   # WinGet/DSC 目标状态
 ├── docs/
 │   ├── architecture.md        # 设计决策与范围
-│   └── operations.md          # 应用、检查及暂存工作流程
+│   ├── operations.md          # 应用、检查及暂存工作流程
+│   └── packages.md            # 托管的软件包目录
 ├── home/
 │   ├── git/
 │   │   └── manage-git.ps1     # 管理不含敏感信息的全局 Git 设置
@@ -86,22 +87,20 @@ Get-Content .\.config\configuration.winget
 提升权限后的 DSC 资源可能无法访问普通用户会话中映射的驱动器盘符。如果作为配置源的工作树位于映射驱动器或网络驱动器上，请先将用于执行的副本暂存到本地系统盘：
 
 ```powershell
-.\scripts\copy-local.ps1 -Clean
-cd "$env:USERPROFILE\projects\windows-config"
+Set-Location Y:\projects\windows-config
+
+.\scripts\copy-local.ps1 `
+    -Destination "$env:USERPROFILE\projects\windows-config" `
+    -Clean
+
+Set-Location "$env:USERPROFILE\projects\windows-config"
+
 .\scripts\check.ps1
 .\scripts\apply.ps1
 .\scripts\check.ps1
 ```
 
 `-Clean` 会先删除现有目标目录再进行复制，因此不要在本地执行副本中保留未提交的工作。映射驱动器上的工作树仍是编辑和执行 Git 操作的唯一配置源。
-
-如需通过一条命令完成暂存和应用，请运行：
-
-```powershell
-.\scripts\bootstrap.ps1
-```
-
-默认情况下，如果从其他位置调用 `bootstrap.ps1`，它会使用全新副本替换 `%USERPROFILE%\projects\windows-config`，然后从该本地路径应用配置。可以通过 `-LocalRepo` 指定其他目标路径。
 
 完整工作流程和故障排除说明请参阅[操作指南](docs/operations.md)。
 
