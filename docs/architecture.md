@@ -18,7 +18,7 @@ The design priorities are:
 
 `.config/configuration.winget` is the primary desired-state document. Package declarations and DSC-backed settings belong there; a separate package list would create two sources of truth.
 
-The current document contains 23 `Microsoft.WinGet/Package` resources and one elevated `Microsoft.Windows/Registry` resource. Package resources use `useLatest: true`, so applying the configuration may upgrade an already installed package. The human-readable inventory is maintained in [Packages](packages.md), while the configuration document remains the source of truth.
+The current document contains 25 `Microsoft.WinGet/Package` resources and one elevated `Microsoft.Windows/Registry` resource. Most package resources use `useLatest: true`, so applying the configuration may upgrade an already installed package. MSYS2 is the exception because its WinGet manifest denies upgrades; the package resource only ensures that MSYS2 is installed, while its environment is updated through `pacman`. The human-readable inventory is maintained in [Packages](packages.md), while the configuration document remains the source of truth.
 
 The document uses the WinGet Configuration v3 schema and requires WinGet 1.11 or later. Its package and registry types are native v3 resources; they do not require separately installed PowerShell modules.
 

@@ -26,6 +26,15 @@ resources:
       description: Install PowerShell 7
 
   - type: Microsoft.WinGet/Package
+    name: Python
+    properties:
+      id: Python.Python.3.14
+      source: winget
+      useLatest: true
+    metadata:
+      description: Install Python 3.14
+
+  - type: Microsoft.WinGet/Package
     name: VisualStudioCode
     properties:
       id: Microsoft.VisualStudioCode
@@ -42,6 +51,15 @@ resources:
       useLatest: true
     metadata:
       description: Install Windows Terminal
+
+  - type: Microsoft.WinGet/Package
+    name: MSYS2
+    properties:
+      id: MSYS2.MSYS2
+      source: winget
+      useLatest: false
+    metadata:
+      description: Install the MSYS2 base environment
 
   # Desktop applications
   - type: Microsoft.WinGet/Package

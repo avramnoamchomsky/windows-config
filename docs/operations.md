@@ -59,6 +59,15 @@ The copy includes hidden entries such as `.config` and `.git`. Without `-Clean`,
 
 After the first application of newly added command-line packages, open a new PowerShell session so it receives any PATH changes made by WinGet. Installing Starship and zoxide does not automatically enable their shell integrations; those remain explicit profile decisions.
 
+The configuration installs Python 3.14 and the MSYS2 base environment. Verify Python from a new PowerShell session:
+
+```powershell
+python --version
+py -3.14 --version
+```
+
+MSYS2 is installed without selecting a compiler toolchain. Open an MSYS2 terminal and update its package database and base system with `pacman -Syu`; if MSYS2 asks you to close the terminal, reopen it and run the command again. WinGet does not upgrade MSYS2 because the upstream WinGet manifest explicitly denies that operation.
+
 After installing and enabling the Microsoft Chinese input method, optionally configure Xiaohe double pinyin from the local execution copy:
 
 ```powershell

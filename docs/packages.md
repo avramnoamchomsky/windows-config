@@ -1,6 +1,6 @@
 # Packages
 
-`.config/configuration.winget` is the source of truth for installed software. This catalog provides a compact review view of the package resources managed by the repository. Every package uses the public `winget` source and `useLatest: true`.
+`.config/configuration.winget` is the source of truth for installed software. This catalog provides a compact review view of the package resources managed by the repository. Every package uses the public `winget` source. Packages use `useLatest: true` unless an exception is documented below.
 
 ## Core development tools
 
@@ -8,8 +8,12 @@
 | --- | --- | --- |
 | Git | `Git.Git` | Version control |
 | PowerShell 7 | `Microsoft.PowerShell` | Modern PowerShell runtime |
+| Python 3.14 | `Python.Python.3.14` | Python runtime and standard tooling |
 | Visual Studio Code | `Microsoft.VisualStudioCode` | Code editor |
 | Windows Terminal | `Microsoft.WindowsTerminal` | Terminal application |
+| MSYS2 | `MSYS2.MSYS2` | Unix-like environment and `pacman` package manager |
+
+MSYS2 uses `useLatest: false` because its WinGet manifest has `UpgradeBehavior: deny`. WinGet ensures that the base environment is installed; update the environment and install toolchains with `pacman` inside MSYS2.
 
 ## Desktop applications
 
