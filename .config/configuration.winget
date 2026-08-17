@@ -41,3 +41,16 @@ resources:
       useLatest: true
     metadata:
       description: Install Windows Terminal
+
+  - type: Microsoft.Windows/Registry
+    name: EnableLongPaths
+    properties:
+      keyPath: HKLM\SYSTEM\CurrentControlSet\Control\FileSystem
+      valueName: LongPathsEnabled
+      valueData:
+        DWord: 1
+      _exist: true
+    metadata:
+      winget:
+        securityContext: elevated
+      description: Enable Win32 long path support
