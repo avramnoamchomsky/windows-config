@@ -5,6 +5,7 @@ $WslConfig = Join-Path $PSScriptRoot "..\system\wsl.ps1"
 $PowerShellProfileConfig = Join-Path `
     $PSScriptRoot `
     "..\home\powershell\manage-profile.ps1"
+$GitConfig = Join-Path $PSScriptRoot "..\home\git\manage-git.ps1"
 $Prerequisites = Join-Path $PSScriptRoot "assert-prerequisites.ps1"
 
 & $Prerequisites | Out-Null
@@ -15,6 +16,12 @@ Write-Host ""
 
 winget configure test -f $Config
 $WinGetExitCode = $LASTEXITCODE
+
+Write-Host ""
+Write-Host "Checking Git user configuration..."
+Write-Host ""
+
+$GitInDesiredState = & $GitConfig -Operation Test
 
 Write-Host ""
 Write-Host "Checking PowerShell profile configuration..."
@@ -30,6 +37,7 @@ $WslInDesiredState = & $WslConfig -Operation Test
 
 if (
     ($WinGetExitCode -ne 0) -or
+    (-not $GitInDesiredState) -or
     (-not $PowerShellProfileInDesiredState) -or
     (-not $WslInDesiredState)
 ) {

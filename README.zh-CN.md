@@ -15,7 +15,7 @@
 | 软件包 | 通过 WinGet 安装 Git、PowerShell 7、Visual Studio Code 和 Windows Terminal，并保持最新版本 | 已实现 |
 | 系统 | 通过 `LongPathsEnabled` 启用 Win32 长路径支持 | 已实现 |
 | WSL | 安装 WSL 2 平台，但不选择或修改 Linux 发行版 | 已实现 |
-| 用户 | PowerShell 7 和 Windows PowerShell 加载由仓库管理的用户配置文件 | 已实现 |
+| 用户 | 托管的 PowerShell 偏好设置和不含敏感信息的全局 Git 设置 | 已实现 |
 | 开发人员模式 | 不由本仓库管理 | 有意如此 |
 | Hyper-V、Sandbox、Containers | 不由本仓库启用 | 有意如此 |
 
@@ -31,6 +31,8 @@ windows-config/
 │   ├── architecture.md        # 设计决策与范围
 │   └── operations.md          # 应用、检查及暂存工作流程
 ├── home/
+│   ├── git/
+│   │   └── manage-git.ps1     # 管理不含敏感信息的全局 Git 设置
 │   ├── powershell/
 │   │   ├── manage-profile.ps1 # 部署并检查配置文件加载器
 │   │   └── profile.ps1        # 跨宿主的托管配置文件
@@ -108,12 +110,12 @@ cd "$env:USERPROFILE\projects\windows-config"
 | 脚本 | 行为 |
 | --- | --- |
 | `scripts/assert-prerequisites.ps1` | 要求 Windows 11、WinGet 1.11 或更高版本，以及 Windows WSL CLI |
-| `scripts/check.ps1` | 检查 WinGet/DSC、PowerShell 配置文件和 WSL 状态 |
-| `scripts/apply.ps1` | 应用 WinGet/DSC、PowerShell 配置文件和 WSL 状态 |
+| `scripts/check.ps1` | 检查 WinGet/DSC、Git、PowerShell 配置文件和 WSL 状态 |
+| `scripts/apply.ps1` | 应用 WinGet/DSC、Git、PowerShell 配置文件和 WSL 状态 |
 | `scripts/copy-local.ps1` | 将包括 `.config` 和 `.git` 在内的所有仓库内容复制到本地路径；使用 `-Clean` 时会完整替换目标目录 |
 | `scripts/bootstrap.ps1` | 检查所有环境要求，必要时创建干净的本地执行副本，然后应用配置 |
 
-PowerShell 配置文件管理器的详细说明位于 [`home/README.md`](home/README.md)。它会保留现有配置文件内容，并在添加或修复带标记的加载区块前创建一次性备份。
+用户配置的详细说明位于 [`home/README.md`](home/README.md)。配置文件管理器会保留现有内容，并在添加或修复带标记的加载区块前创建一次性备份。Git 身份、凭据、换行策略和拉取策略仍不由本仓库管理。
 
 ## 安全与机密信息
 

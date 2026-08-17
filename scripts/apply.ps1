@@ -5,6 +5,7 @@ $WslConfig = Join-Path $PSScriptRoot "..\system\wsl.ps1"
 $PowerShellProfileConfig = Join-Path `
     $PSScriptRoot `
     "..\home\powershell\manage-profile.ps1"
+$GitConfig = Join-Path $PSScriptRoot "..\home\git\manage-git.ps1"
 $Prerequisites = Join-Path $PSScriptRoot "assert-prerequisites.ps1"
 
 & $Prerequisites | Out-Null
@@ -18,6 +19,15 @@ winget configure `
 
 if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
+}
+
+Write-Host ""
+Write-Host "Applying Git user configuration..."
+
+$GitState = & $GitConfig -Operation Apply
+
+if (-not $GitState.InDesiredState) {
+    throw "Git user configuration did not reach the desired state."
 }
 
 Write-Host ""

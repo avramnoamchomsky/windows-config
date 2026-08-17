@@ -4,7 +4,16 @@ This directory contains per-user configuration and dotfiles. Machine-wide featur
 
 ## PowerShell profile
 
-`powershell/profile.ps1` is the repository-managed, cross-host PowerShell profile. It is intentionally neutral at first; portable, non-sensitive preferences can be added there as they are chosen.
+`powershell/profile.ps1` is the repository-managed, cross-host PowerShell profile. It currently configures:
+
+- VS Code as `EDITOR` and `VISUAL`;
+- Windows edit mode and duplicate-free history through PSReadLine;
+- history-based command prediction when supported;
+- list-style prediction when supported;
+- menu completion on Tab; and
+- `Test-WindowsConfig` and `Update-WindowsConfig` helper functions.
+
+PSReadLine settings are applied only in `ConsoleHost` and are feature-detected for compatibility with both PowerShell 7 and Windows PowerShell 5.1. Unsupported options are skipped without preventing the shell from starting.
 
 `powershell/manage-profile.ps1` supports three operations:
 
@@ -40,6 +49,34 @@ Subsequent applies update only the content between the `windows-config` markers.
 
 The main `scripts/check.ps1` and `scripts/apply.ps1` entry points include this profile state automatically.
 
+## Git configuration
+
+`git/manage-git.ps1` manages a small set of non-sensitive global settings:
+
+| Key | Value | Purpose |
+| --- | --- | --- |
+| `init.defaultBranch` | `main` | Use `main` for new repositories |
+| `fetch.prune` | `true` | Remove stale remote-tracking branches during fetch |
+| `push.autoSetupRemote` | `true` | Set the upstream automatically on the first push |
+| `core.longpaths` | `true` | Allow Git for Windows to use long paths |
+| `core.editor` | `code --wait` | Use VS Code for Git editing workflows |
+
+The manager supports the same operations as the profile manager:
+
+```powershell
+.\home\git\manage-git.ps1 -Operation Get
+.\home\git\manage-git.ps1 -Operation Test
+.\home\git\manage-git.ps1 -Operation Apply
+```
+
+It owns only the keys listed above and preserves every other global Git setting. User identity, credential helpers, signing keys, line-ending policy, and pull/rebase strategy are intentionally unmanaged.
+
+To stop managing a key, remove it from `$DesiredSettings` and decide explicitly whether to leave its current global value or remove it with:
+
+```powershell
+git config --global --unset-all <key>
+```
+
 ## Future areas
 
-Candidate additions include Git configuration, Windows Terminal settings, Explorer preferences, and application-specific user settings. A setting should only be added after its desired value, merge behavior, and recovery path are known. Secrets and machine-specific credentials must remain outside the repository.
+Candidate additions include Windows Terminal settings, VS Code settings and extensions, Explorer preferences, and application-specific user settings. A setting should only be added after its desired value, merge behavior, and recovery path are known. Secrets and machine-specific credentials must remain outside the repository.

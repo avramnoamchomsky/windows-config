@@ -23,7 +23,7 @@ cd C:\path\to\windows-config
 .\scripts\check.ps1
 ```
 
-`check.ps1` returns `1` when WinGet/DSC, the PowerShell profile, or WSL is out of state. `apply.ps1` returns `3010` when Windows must be restarted to finish enabling WSL; other failures return a nonzero code or a terminating PowerShell error.
+`check.ps1` returns `1` when WinGet/DSC, Git, the PowerShell profile, or WSL is out of state. `apply.ps1` returns `3010` when Windows must be restarted to finish enabling WSL; other failures return a nonzero code or a terminating PowerShell error.
 
 The check/apply workflow also manages the current user's PowerShell 7 and Windows PowerShell all-hosts profiles. Existing content outside the marked `windows-config` block is preserved.
 
@@ -90,6 +90,33 @@ The main scripts manage the profile automatically. To inspect or operate it sepa
 Changes to `home/powershell/profile.ps1` take effect after the next apply and in newly started PowerShell sessions. The deployed copy lives at `%USERPROFILE%\.config\windows-config\powershell\profile.ps1`; native profile files contain only a marked loader plus any pre-existing unmanaged content.
 
 If a native profile existed before adoption, its one-time backup has the suffix `.windows-config.bak`. Restore that file manually only after reviewing any profile changes made since the backup.
+
+After applying profile changes, start a new PowerShell session. The available repository helpers are:
+
+```powershell
+Test-WindowsConfig
+Update-WindowsConfig
+```
+
+The test helper prefers the local execution copy. The update helper prefers the canonical `Y:\projects\windows-config` checkout and falls back to the local copy when the mapped drive is unavailable.
+
+## Git user configuration
+
+The main scripts manage the selected global Git keys automatically. To inspect or operate them separately:
+
+```powershell
+.\home\git\manage-git.ps1 -Operation Get
+.\home\git\manage-git.ps1 -Operation Test
+.\home\git\manage-git.ps1 -Operation Apply
+```
+
+Review effective values and their source files with:
+
+```powershell
+git config --global --list --show-origin
+```
+
+The manager does not set `user.name`, `user.email`, credential helpers, signing configuration, `core.autocrlf`, or `pull.rebase`.
 
 ## First-run behavior
 

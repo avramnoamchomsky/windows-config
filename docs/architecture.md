@@ -35,13 +35,17 @@ Configuration is divided by ownership:
 | `system/` | Windows optional features, WSL platform, machine-wide registry or policy state |
 | `home/` | PowerShell profile, Git configuration, Terminal settings, Explorer preferences, user dotfiles |
 
-`system/` contains the WSL platform helper. `home/` contains a managed PowerShell profile loader; the deployed profile is intentionally neutral until explicit user preferences are selected.
+`system/` contains the WSL platform helper. `home/` contains managed PowerShell preferences and a limited set of non-sensitive global Git settings.
 
 ### PowerShell profile ownership
 
 The repository owns `home/powershell/profile.ps1`, which is copied to a stable path below `%USERPROFILE%\.config`. PowerShell 7 and Windows PowerShell retain their native profile files; the manager owns only a clearly marked import block inside each file. This allows unmanaged content to coexist with repository state.
 
 Before modifying a pre-existing profile for the first time, the manager creates a `.windows-config.bak` sibling. Malformed or duplicate managed markers are treated as errors instead of being repaired destructively.
+
+### Git configuration ownership
+
+The Git manager owns only keys declared in its `$DesiredSettings` map. It does not rewrite the global configuration file wholesale, so unrelated user settings coexist with repository state. Identity, credentials, signing keys, line endings, and pull/rebase behavior require explicit decisions and remain unmanaged.
 
 ## Current boundaries
 
