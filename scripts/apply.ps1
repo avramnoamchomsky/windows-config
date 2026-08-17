@@ -7,17 +7,6 @@ $Prerequisites = Join-Path $PSScriptRoot "assert-prerequisites.ps1"
 & $Prerequisites | Out-Null
 
 Write-Host ""
-
-Write-Host "Validating WinGet configuration..."
-
-winget configure validate -f $Config
-
-if ($LASTEXITCODE -ne 0) {
-    exit $LASTEXITCODE
-}
-
-Write-Host ""
-
 Write-Host "Applying Windows configuration..."
 
 winget configure `

@@ -43,7 +43,7 @@ Get-Content .\.config\configuration.winget
 .\scripts\check.ps1
 ```
 
-`check.ps1` validates the document and tests WinGet/DSC and WSL state without changing the machine. `apply.ps1` validates and applies both configuration layers.
+`check.ps1` tests WinGet/DSC and WSL state without changing the machine. `apply.ps1` applies both configuration layers.
 
 If enabling WSL requires a restart, `apply.ps1` returns exit code `3010`. Restart Windows, then run the check/apply workflow again.
 
@@ -104,8 +104,8 @@ Machine-wide settings belong under `system/`; per-user settings and dotfiles bel
 | Script | Behavior |
 | --- | --- |
 | `scripts/assert-prerequisites.ps1` | Requires Windows 11, WinGet 1.11+, and the Windows WSL CLI |
-| `scripts/check.ps1` | Validates the WinGet document and tests WinGet/DSC and WSL state |
-| `scripts/apply.ps1` | Validates and applies WinGet/DSC and WSL state |
+| `scripts/check.ps1` | Tests WinGet/DSC and WSL state |
+| `scripts/apply.ps1` | Applies WinGet/DSC and WSL state |
 | `scripts/copy-local.ps1` | Copies all repository content, including `.config` and `.git`, to a local path; `-Clean` makes it an exact replacement |
 | `scripts/bootstrap.ps1` | Verifies all prerequisites, creates a clean local execution copy when necessary, and applies it |
 

@@ -23,15 +23,15 @@ cd C:\path\to\windows-config
 .\scripts\check.ps1
 ```
 
-Both scripts validate the WinGet document before testing or applying it. `check.ps1` returns `1` when either WinGet/DSC or WSL is out of state. `apply.ps1` returns `3010` when Windows must be restarted to finish enabling WSL; other failures return a nonzero code or a terminating PowerShell error.
+`check.ps1` returns `1` when either WinGet/DSC or WSL is out of state. `apply.ps1` returns `3010` when Windows must be restarted to finish enabling WSL; other failures return a nonzero code or a terminating PowerShell error.
 
-To validate only the configuration document's structure without testing live state, run WinGet directly:
+For optional validator diagnostics without testing live state, run WinGet directly:
 
 ```powershell
 winget configure validate -f .\.config\configuration.winget
 ```
 
-`check.ps1` subsequently runs `winget configure test` and `system/wsl.ps1 -Operation Test`, which evaluate live state.
+This command is not an automated gate because current builds may emit resource-discovery warnings for native v3 resources; see [Configuration validation warnings](#configuration-validation-warnings). `check.ps1` instead runs `winget configure test` and `system/wsl.ps1 -Operation Test`, which evaluate live state.
 
 ## Mapped-drive workflow
 
@@ -91,7 +91,9 @@ Microsoft explains why [mapped drives can be unavailable from an elevated prompt
 
 ### Configuration validation warnings
 
-The current `Microsoft.WinGet/Package` and `Microsoft.Windows/Registry` resources are native DSC v3 resources and should not declare PowerShell modules. If WinGet reports that a module is missing for these resources, first update to WinGet 1.11 or later and allow it to update the DSC v3 processor. Do not suppress or work around the warning by adding an unrelated module declaration.
+The current `Microsoft.WinGet/Package` and `Microsoft.Windows/Registry` resources are native DSC v3 resources and must not declare unrelated PowerShell modules. On the tested WinGet 1.29 build, `winget configure validate` warns that these native resources have no module and are not publicly available, then may return a failure code even though `winget configure` can resolve and apply them.
+
+For that reason, the standalone validator is informational and is not an automated gate. `check.ps1` uses `winget configure test`, while `apply.ps1` uses `winget configure`; both commands parse the document and fail safely if it is invalid. Do not silence the warnings by inventing module metadata.
 
 ### Long paths still fail in one application
 

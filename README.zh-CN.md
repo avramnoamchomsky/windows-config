@@ -43,7 +43,7 @@ Get-Content .\.config\configuration.winget
 .\scripts\check.ps1
 ```
 
-`check.ps1` 会验证配置文档，并检查 WinGet/DSC 和 WSL 状态，但不会修改计算机。`apply.ps1` 会验证并应用这两个配置层。
+`check.ps1` 会检查 WinGet/DSC 和 WSL 状态，但不会修改计算机。`apply.ps1` 会应用这两个配置层。
 
 如果启用 WSL 后需要重新启动，`apply.ps1` 会返回退出代码 `3010`。请重新启动 Windows，然后再次运行检查和应用流程。
 
@@ -104,8 +104,8 @@ windows-config/
 | 脚本 | 行为 |
 | --- | --- |
 | `scripts/assert-prerequisites.ps1` | 要求 Windows 11、WinGet 1.11 或更高版本，以及 Windows WSL CLI |
-| `scripts/check.ps1` | 验证 WinGet 文档，并检查 WinGet/DSC 和 WSL 状态 |
-| `scripts/apply.ps1` | 验证并应用 WinGet/DSC 和 WSL 状态 |
+| `scripts/check.ps1` | 检查 WinGet/DSC 和 WSL 状态 |
+| `scripts/apply.ps1` | 应用 WinGet/DSC 和 WSL 状态 |
 | `scripts/copy-local.ps1` | 将包括 `.config` 和 `.git` 在内的所有仓库内容复制到本地路径；使用 `-Clean` 时会完整替换目标目录 |
 | `scripts/bootstrap.ps1` | 检查所有环境要求，必要时创建干净的本地执行副本，然后应用配置 |
 

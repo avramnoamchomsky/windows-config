@@ -10,10 +10,10 @@ if ($env:OS -ne "Windows_NT") {
 $WindowsVersionKey = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion"
 $WindowsVersionInfo = Get-ItemProperty -LiteralPath $WindowsVersionKey
 $WindowsBuild = [int]$WindowsVersionInfo.CurrentBuildNumber
-$WindowsVersion = "$($WindowsVersionInfo.ProductName) $($WindowsVersionInfo.DisplayVersion) (build $WindowsBuild)"
+$WindowsDisplayVersion = $WindowsVersionInfo.DisplayVersion
 
 if ($WindowsBuild -lt 22000) {
-    throw "Windows 11 build 22000 or later is required. Found $WindowsVersion."
+    throw "Windows 11 build 22000 or later is required. Found build $WindowsBuild."
 }
 
 $WinGetCommand = Get-Command `
@@ -55,12 +55,12 @@ if ($null -eq $WslCommand) {
     throw "wsl.exe is not available. Install current Windows updates and try again."
 }
 
-Write-Host "Windows: $WindowsVersion"
-Write-Host "WinGet:  $VersionText"
-Write-Host "WSL CLI: $($WslCommand.Source)"
+Write-Host "Windows build: $WindowsBuild ($WindowsDisplayVersion)"
+Write-Host "WinGet:       $VersionText"
+Write-Host "WSL CLI:      $($WslCommand.Source)"
 
 [pscustomobject]@{
-    WindowsVersion = $WindowsVersion
+    WindowsDisplayVersion = $WindowsDisplayVersion
     WindowsBuild = $WindowsBuild
     WinGetVersion = $WinGetVersion
     WinGetPath = $WinGetCommand.Source
