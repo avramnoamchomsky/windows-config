@@ -2,6 +2,9 @@ $ErrorActionPreference = "Stop"
 
 $Config = Join-Path $PSScriptRoot "..\.config\configuration.winget"
 $WslConfig = Join-Path $PSScriptRoot "..\system\wsl.ps1"
+$PowerShellProfileConfig = Join-Path `
+    $PSScriptRoot `
+    "..\home\powershell\manage-profile.ps1"
 $Prerequisites = Join-Path $PSScriptRoot "assert-prerequisites.ps1"
 
 & $Prerequisites | Out-Null
@@ -14,12 +17,22 @@ winget configure test -f $Config
 $WinGetExitCode = $LASTEXITCODE
 
 Write-Host ""
+Write-Host "Checking PowerShell profile configuration..."
+Write-Host ""
+
+$PowerShellProfileInDesiredState = & $PowerShellProfileConfig -Operation Test
+
+Write-Host ""
 Write-Host "Checking WSL 2 platform configuration..."
 Write-Host ""
 
 $WslInDesiredState = & $WslConfig -Operation Test
 
-if (($WinGetExitCode -ne 0) -or (-not $WslInDesiredState)) {
+if (
+    ($WinGetExitCode -ne 0) -or
+    (-not $PowerShellProfileInDesiredState) -or
+    (-not $WslInDesiredState)
+) {
     exit 1
 }
 

@@ -23,7 +23,9 @@ cd C:\path\to\windows-config
 .\scripts\check.ps1
 ```
 
-`check.ps1` returns `1` when either WinGet/DSC or WSL is out of state. `apply.ps1` returns `3010` when Windows must be restarted to finish enabling WSL; other failures return a nonzero code or a terminating PowerShell error.
+`check.ps1` returns `1` when WinGet/DSC, the PowerShell profile, or WSL is out of state. `apply.ps1` returns `3010` when Windows must be restarted to finish enabling WSL; other failures return a nonzero code or a terminating PowerShell error.
+
+The check/apply workflow also manages the current user's PowerShell 7 and Windows PowerShell all-hosts profiles. Existing content outside the marked `windows-config` block is preserved.
 
 For optional validator diagnostics without testing live state, run WinGet directly:
 
@@ -74,6 +76,20 @@ To use a different local destination:
 ```
 
 Because bootstrap stages and applies immediately, use the explicit copy/check/apply workflow when you want to inspect conformance before applying.
+
+## PowerShell profile workflow
+
+The main scripts manage the profile automatically. To inspect or operate it separately:
+
+```powershell
+.\home\powershell\manage-profile.ps1 -Operation Get
+.\home\powershell\manage-profile.ps1 -Operation Test
+.\home\powershell\manage-profile.ps1 -Operation Apply
+```
+
+Changes to `home/powershell/profile.ps1` take effect after the next apply and in newly started PowerShell sessions. The deployed copy lives at `%USERPROFILE%\.config\windows-config\powershell\profile.ps1`; native profile files contain only a marked loader plus any pre-existing unmanaged content.
+
+If a native profile existed before adoption, its one-time backup has the suffix `.windows-config.bak`. Restore that file manually only after reviewing any profile changes made since the backup.
 
 ## First-run behavior
 

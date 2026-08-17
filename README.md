@@ -15,6 +15,7 @@ The configuration currently manages:
 | Packages | Git, PowerShell 7, Visual Studio Code, and Windows Terminal are installed from WinGet and kept current | Implemented |
 | System | Win32 long-path support is enabled through `LongPathsEnabled` | Implemented |
 | WSL | WSL 2 platform installed without selecting or modifying a Linux distribution | Implemented |
+| Home | PowerShell 7 and Windows PowerShell load a repository-managed user profile | Implemented |
 | Developer Mode | Left unmanaged | Intentional |
 | Hyper-V, Sandbox, Containers | Not enabled by this repository | Intentional |
 
@@ -30,7 +31,10 @@ windows-config/
 │   ├── architecture.md        # design decisions and scope
 │   └── operations.md          # apply, check, and staging workflows
 ├── home/
-│   └── README.md              # policy for future per-user state
+│   ├── powershell/
+│   │   ├── manage-profile.ps1 # deploy and test profile loaders
+│   │   └── profile.ps1        # managed cross-host profile
+│   └── README.md              # per-user configuration policy
 ├── scripts/
 │   ├── apply.ps1              # apply desired state
 │   ├── assert-prerequisites.ps1 # verify Windows, WinGet, and WSL CLI
@@ -104,10 +108,12 @@ See [Operations](docs/operations.md) for the full workflow and troubleshooting n
 | Script | Behavior |
 | --- | --- |
 | `scripts/assert-prerequisites.ps1` | Requires Windows 11, WinGet 1.11+, and the Windows WSL CLI |
-| `scripts/check.ps1` | Tests WinGet/DSC and WSL state |
-| `scripts/apply.ps1` | Applies WinGet/DSC and WSL state |
+| `scripts/check.ps1` | Tests WinGet/DSC, PowerShell profile, and WSL state |
+| `scripts/apply.ps1` | Applies WinGet/DSC, PowerShell profile, and WSL state |
 | `scripts/copy-local.ps1` | Copies all repository content, including `.config` and `.git`, to a local path; `-Clean` makes it an exact replacement |
 | `scripts/bootstrap.ps1` | Verifies all prerequisites, creates a clean local execution copy when necessary, and applies it |
+
+The PowerShell profile manager is documented in [`home/README.md`](home/README.md). It preserves existing profile content and creates a one-time backup before adding or repairing its marked loader block.
 
 ## Security and secrets
 

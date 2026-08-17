@@ -2,6 +2,9 @@ $ErrorActionPreference = "Stop"
 
 $Config = Join-Path $PSScriptRoot "..\.config\configuration.winget"
 $WslConfig = Join-Path $PSScriptRoot "..\system\wsl.ps1"
+$PowerShellProfileConfig = Join-Path `
+    $PSScriptRoot `
+    "..\home\powershell\manage-profile.ps1"
 $Prerequisites = Join-Path $PSScriptRoot "assert-prerequisites.ps1"
 
 & $Prerequisites | Out-Null
@@ -15,6 +18,15 @@ winget configure `
 
 if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
+}
+
+Write-Host ""
+Write-Host "Applying PowerShell profile configuration..."
+
+$PowerShellProfileState = & $PowerShellProfileConfig -Operation Apply
+
+if (-not $PowerShellProfileState.InDesiredState) {
+    throw "PowerShell profiles did not reach the desired state."
 }
 
 Write-Host ""
