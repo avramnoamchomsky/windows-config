@@ -1,0 +1,21 @@
+# Windows
+Thumbs.db
+Desktop.ini
+
+# PowerShell
+*.clixml
+
+# Local/private configuration
+*.local
+*.local.*
+.env
+.env.*
+
+# Secrets
+secrets/*
+!secrets/README.md
+
+# Temporary files
+*.tmp
+*.bak
+*~
