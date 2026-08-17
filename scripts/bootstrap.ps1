@@ -9,6 +9,7 @@ $ErrorActionPreference = "Stop"
 
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $LocalRepo = [System.IO.Path]::GetFullPath($LocalRepo)
+$Prerequisites = Join-Path $PSScriptRoot "assert-prerequisites.ps1"
 
 Write-Host "Windows configuration bootstrap"
 Write-Host ""
@@ -16,11 +17,7 @@ Write-Host "Repository: $RepoRoot"
 Write-Host "Local copy: $LocalRepo"
 Write-Host ""
 
-if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-    throw "WinGet is not available."
-}
-
-Write-Host "WinGet: $(winget --version)"
+& $Prerequisites | Out-Null
 Write-Host ""
 
 $Current = $RepoRoot.TrimEnd("\")

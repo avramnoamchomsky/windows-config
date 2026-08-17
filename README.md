@@ -14,7 +14,7 @@ The configuration currently manages:
 | --- | --- | --- |
 | Packages | Git, PowerShell 7, Visual Studio Code, and Windows Terminal are installed from WinGet and kept current | Implemented |
 | System | Win32 long-path support is enabled through `LongPathsEnabled` | Implemented |
-| WSL | WSL 2 platform installed without selecting a Linux distribution | Planned |
+| WSL | WSL 2 platform installed without selecting or modifying a Linux distribution | Implemented |
 | Developer Mode | Left unmanaged | Intentional |
 | Hyper-V, Sandbox, Containers | Not enabled by this repository | Intentional |
 
@@ -23,7 +23,7 @@ The complete implemented state is visible in [`.config/configuration.winget`](.c
 ## Requirements
 
 - Windows 11
-- WinGet with `winget configure` support (WinGet 1.6.2631 or later)
+- WinGet 1.11 or later with DSC v3 configuration support
 - PowerShell
 - Network access for packages and DSC resources that are not already cached
 
@@ -43,7 +43,9 @@ Get-Content .\.config\configuration.winget
 .\scripts\check.ps1
 ```
 
-`check.ps1` runs `winget configure test`; it checks conformance but does not change the machine. `apply.ps1` applies the configuration and returns WinGet's exit code.
+`check.ps1` validates the document and tests WinGet/DSC and WSL state without changing the machine. `apply.ps1` validates and applies both configuration layers.
+
+If enabling WSL requires a restart, `apply.ps1` returns exit code `3010`. Restart Windows, then run the check/apply workflow again.
 
 ## Repositories on mapped drives
 
@@ -78,27 +80,34 @@ windows-config/
 ├── docs/
 │   ├── architecture.md        # design decisions and scope
 │   └── operations.md          # apply, check, and staging workflows
+├── home/
+│   └── README.md              # policy for future per-user state
 ├── scripts/
 │   ├── apply.ps1              # apply desired state
+│   ├── assert-prerequisites.ps1 # verify Windows, WinGet, and WSL CLI
 │   ├── bootstrap.ps1          # stage locally when needed, then apply
 │   ├── check.ps1              # test current state for conformance
 │   └── copy-local.ps1         # create/update a local execution copy
+├── system/
+│   ├── README.md              # machine-wide configuration notes
+│   └── wsl.ps1                # idempotent WSL 2 platform state
 ├── .gitignore
 ├── LICENSE
 ├── README.md
 └── README.zh-CN.md
 ```
 
-Machine-wide settings belong conceptually under `system/`; per-user settings and dotfiles belong under `home/`. Those areas will be added when they contain implemented configuration. See [Architecture](docs/architecture.md) for the boundaries and planned WSL work.
+Machine-wide settings belong under `system/`; per-user settings and dotfiles belong under `home/`. See [Architecture](docs/architecture.md) for the ownership boundaries.
 
 ## Script reference
 
 | Script | Behavior |
 | --- | --- |
-| `scripts/check.ps1` | Tests the machine against `.config/configuration.winget` |
-| `scripts/apply.ps1` | Applies the WinGet configuration and accepts its agreement |
+| `scripts/assert-prerequisites.ps1` | Requires Windows 11, WinGet 1.11+, and the Windows WSL CLI |
+| `scripts/check.ps1` | Validates the WinGet document and tests WinGet/DSC and WSL state |
+| `scripts/apply.ps1` | Validates and applies WinGet/DSC and WSL state |
 | `scripts/copy-local.ps1` | Copies all repository content, including `.config` and `.git`, to a local path; `-Clean` makes it an exact replacement |
-| `scripts/bootstrap.ps1` | Verifies WinGet, creates a clean local execution copy when necessary, and applies it |
+| `scripts/bootstrap.ps1` | Verifies all prerequisites, creates a clean local execution copy when necessary, and applies it |
 
 ## Security and secrets
 

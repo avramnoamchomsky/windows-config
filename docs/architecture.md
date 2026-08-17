@@ -20,20 +20,22 @@ The design priorities are:
 
 The current document contains four `Microsoft.WinGet/Package` resources and one elevated `Microsoft.Windows/Registry` resource. Package resources use `useLatest: true`, so applying the configuration may upgrade an already installed package.
 
+The document uses the WinGet Configuration v3 schema and requires WinGet 1.11 or later. Its package and registry types are native v3 resources; they do not require separately installed PowerShell modules.
+
 ### PowerShell helpers
 
-Scripts under `scripts/` provide entry points around WinGet and handle the mapped-drive staging problem. Future PowerShell configuration should expose a reliable test before changing state, avoid resetting existing user data, and remain safe to run repeatedly.
+Scripts under `scripts/` provide entry points around WinGet and handle the mapped-drive staging problem. `system/wsl.ps1` manages the WSL platform because no native resource currently expresses the required behavior without also choosing a distribution. PowerShell configuration must expose a reliable test before changing state, avoid resetting existing user data, and remain safe to run repeatedly.
 
 ### System and home scopes
 
-Future configuration is divided conceptually by ownership:
+Configuration is divided by ownership:
 
 | Scope | Examples |
 | --- | --- |
 | `system/` | Windows optional features, WSL platform, machine-wide registry or policy state |
 | `home/` | PowerShell profile, Git configuration, Terminal settings, Explorer preferences, user dotfiles |
 
-The directories should be introduced when they contain working configuration rather than as empty placeholders.
+`system/` now contains the WSL platform helper. `home/` documents the safety contract for future user state but intentionally enforces no preferences yet.
 
 ## Current boundaries
 
@@ -56,9 +58,9 @@ Developer Mode is not configured. This means the repository neither enables it n
 
 Full Hyper-V, Windows Sandbox, and Windows Containers are outside the current desired state. Features should be added only when a concrete use case requires them.
 
-## Planned WSL 2 support
+## WSL 2 support
 
-WSL is a planned system-level feature, not an implemented resource. Its eventual configuration should:
+`system/wsl.ps1` implements WSL as a system-level feature. It does the following:
 
 - install the WSL platform without choosing a Linux distribution;
 - make WSL 2 the default for newly installed distributions;
@@ -66,16 +68,16 @@ WSL is a planned system-level feature, not an implemented resource. Its eventual
 - report clearly when a restart is required; and
 - avoid enabling the full `Microsoft-Hyper-V-All` role solely for WSL 2.
 
-The intended commands are conceptually equivalent to:
+The apply operation is conceptually equivalent to:
 
 ```powershell
 wsl --install --no-distribution
 wsl --set-default-version 2
 ```
 
-Distribution selection and Linux user-space configuration belong in a separate layer. On a Windows guest running under QEMU/KVM or another hypervisor, nested virtualization is an external prerequisite and is not configured by this repository.
+Installation state is tested through `wsl --status`, avoiding localized output parsing. The default version is tested through WSL's per-user `DefaultVersion` state. Platform installation is elevated independently; the default version remains associated with the invoking user.
 
-Before implementation, verify the behavior on both a machine without WSL and one with existing distributions. The helper must never reinstall, unregister, or reset an existing distribution.
+Distribution selection and Linux user-space configuration belong in a separate layer. The helper never converts, reinstalls, unregisters, or resets an existing distribution. On a Windows guest running under QEMU/KVM or another hypervisor, nested virtualization is an external prerequisite and is not configured by this repository.
 
 ## Change criteria
 

@@ -1,6 +1,22 @@
 $ErrorActionPreference = "Stop"
 
 $Config = Join-Path $PSScriptRoot "..\.config\configuration.winget"
+$WslConfig = Join-Path $PSScriptRoot "..\system\wsl.ps1"
+$Prerequisites = Join-Path $PSScriptRoot "assert-prerequisites.ps1"
+
+& $Prerequisites | Out-Null
+
+Write-Host ""
+
+Write-Host "Validating WinGet configuration..."
+
+winget configure validate -f $Config
+
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
+
+Write-Host ""
 
 Write-Host "Applying Windows configuration..."
 
@@ -8,4 +24,25 @@ winget configure `
     -f $Config `
     --accept-configuration-agreements
 
-exit $LASTEXITCODE
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
+
+Write-Host ""
+Write-Host "Applying WSL 2 platform configuration..."
+
+$WslState = & $WslConfig -Operation Apply
+
+if ($WslState.RestartRequired) {
+    Write-Warning "WSL installation completed, but Windows must be restarted before configuration can finish."
+    exit 3010
+}
+
+if (-not $WslState.InDesiredState) {
+    throw "WSL did not reach the desired state."
+}
+
+Write-Host ""
+Write-Host "Windows configuration successfully applied."
+
+exit 0

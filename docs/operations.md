@@ -23,15 +23,15 @@ cd C:\path\to\windows-config
 .\scripts\check.ps1
 ```
 
-The scripts return WinGet's exit code, so a nonzero exit code can be used to fail a larger automation workflow.
+Both scripts validate the WinGet document before testing or applying it. `check.ps1` returns `1` when either WinGet/DSC or WSL is out of state. `apply.ps1` returns `3010` when Windows must be restarted to finish enabling WSL; other failures return a nonzero code or a terminating PowerShell error.
 
-To validate only the configuration document's structure, run WinGet directly:
+To validate only the configuration document's structure without testing live state, run WinGet directly:
 
 ```powershell
 winget configure validate -f .\.config\configuration.winget
 ```
 
-`check.ps1` intentionally runs `winget configure test`, which evaluates the live machine rather than only validating the file.
+`check.ps1` subsequently runs `winget configure test` and `system/wsl.ps1 -Operation Test`, which evaluate live state.
 
 ## Mapped-drive workflow
 
@@ -63,7 +63,7 @@ To use a different local destination:
 
 ## Bootstrap shortcut
 
-`bootstrap.ps1` verifies that WinGet is available and prints its version. If the repository is not already at the selected local path, it calls `copy-local.ps1 -Clean` and applies the configuration from the staged copy. If the paths already match, it applies in place.
+`bootstrap.ps1` first verifies Windows 11, WinGet 1.11 or later, and the presence of `wsl.exe`. If the repository is not already at the selected local path, it calls `copy-local.ps1 -Clean` and applies the configuration from the staged copy. If the paths already match, it applies in place.
 
 ```powershell
 # Default local path: %USERPROFILE%\projects\windows-config
@@ -79,7 +79,7 @@ Because bootstrap stages and applies immediately, use the explicit copy/check/ap
 
 WinGet may report that its Desired State Configuration package is missing and install the DSC v3 processor during the first configuration run. Allow that prerequisite installation to finish, then rerun the command if WinGet asks for it.
 
-The current bootstrap script verifies WinGet but does not install WinGet or explicitly preinstall DSC. On supported Windows 11 systems, WinGet is delivered through App Installer; update App Installer if `winget configure` is unavailable.
+The bootstrap script does not install WinGet or explicitly preinstall DSC. WinGet Configuration v3 requires WinGet 1.11 or later; update App Installer if the prerequisite check rejects the installed version.
 
 ## Troubleshooting
 
@@ -91,12 +91,16 @@ Microsoft explains why [mapped drives can be unavailable from an elevated prompt
 
 ### Configuration validation warnings
 
-WinGet may warn that a module was not specified or that a configuration unit is not publicly available. Warnings are not necessarily failures: use the process exit code and the final resource results to determine whether validation, testing, or application succeeded. Investigate new warnings before suppressing them.
+The current `Microsoft.WinGet/Package` and `Microsoft.Windows/Registry` resources are native DSC v3 resources and should not declare PowerShell modules. If WinGet reports that a module is missing for these resources, first update to WinGet 1.11 or later and allow it to update the DSC v3 processor. Do not suppress or work around the warning by adding an unrelated module declaration.
 
 ### Long paths still fail in one application
 
 The repository enables the system registry setting, but a Windows application also has to declare itself long-path aware. A failure isolated to one application does not necessarily mean the DSC resource is out of state. See Microsoft's [maximum path length documentation](https://learn.microsoft.com/windows/win32/fileio/maximum-file-path-limitation).
 
+### WSL requires a restart
+
+If WSL installation succeeds but `wsl --status` is not ready, `apply.ps1` returns `3010`. Restart Windows and run `check.ps1` followed by `apply.ps1` again.
+
 ### WSL commands fail in a virtual machine
 
-WSL is not currently configured by this repository. If testing future WSL work inside a VM, check `wsl --status` and `systeminfo`, then verify that the host exposes nested virtualization before diagnosing the failure as a Windows configuration issue.
+Check `wsl --status` and `systeminfo`, then verify that the host exposes nested virtualization before diagnosing the failure as a Windows configuration issue. The repository does not configure the host hypervisor.

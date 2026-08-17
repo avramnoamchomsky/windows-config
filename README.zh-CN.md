@@ -14,7 +14,7 @@
 | --- | --- | --- |
 | 软件包 | 通过 WinGet 安装 Git、PowerShell 7、Visual Studio Code 和 Windows Terminal，并保持最新版本 | 已实现 |
 | 系统 | 通过 `LongPathsEnabled` 启用 Win32 长路径支持 | 已实现 |
-| WSL | 安装 WSL 2 平台，但不指定 Linux 发行版 | 计划中 |
+| WSL | 安装 WSL 2 平台，但不选择或修改 Linux 发行版 | 已实现 |
 | 开发人员模式 | 不由本仓库管理 | 有意如此 |
 | Hyper-V、Sandbox、Containers | 不由本仓库启用 | 有意如此 |
 
@@ -23,7 +23,7 @@
 ## 环境要求
 
 - Windows 11
-- 支持 `winget configure` 的 WinGet（WinGet 1.6.2631 或更高版本）
+- WinGet 1.11 或更高版本，并支持 DSC v3 配置
 - PowerShell
 - 可访问网络，以获取尚未缓存的软件包和 DSC 资源
 
@@ -43,7 +43,9 @@ Get-Content .\.config\configuration.winget
 .\scripts\check.ps1
 ```
 
-`check.ps1` 会运行 `winget configure test`；它只检查当前系统是否符合目标状态，不会修改计算机。`apply.ps1` 会应用配置，并返回 WinGet 的退出代码。
+`check.ps1` 会验证配置文档，并检查 WinGet/DSC 和 WSL 状态，但不会修改计算机。`apply.ps1` 会验证并应用这两个配置层。
+
+如果启用 WSL 后需要重新启动，`apply.ps1` 会返回退出代码 `3010`。请重新启动 Windows，然后再次运行检查和应用流程。
 
 ## 位于映射驱动器上的仓库
 
@@ -78,27 +80,34 @@ windows-config/
 ├── docs/
 │   ├── architecture.md        # 设计决策与范围
 │   └── operations.md          # 应用、检查及暂存工作流程
+├── home/
+│   └── README.md              # 未来用户级状态的管理原则
 ├── scripts/
 │   ├── apply.ps1              # 应用目标状态
+│   ├── assert-prerequisites.ps1 # 检查 Windows、WinGet 和 WSL CLI
 │   ├── bootstrap.ps1          # 必要时暂存到本地，然后应用
 │   ├── check.ps1              # 检查当前状态是否符合配置
 │   └── copy-local.ps1         # 创建或更新本地执行副本
+├── system/
+│   ├── README.md              # 计算机级配置说明
+│   └── wsl.ps1                # 幂等的 WSL 2 平台状态
 ├── .gitignore
 ├── LICENSE
 ├── README.md
 └── README.zh-CN.md
 ```
 
-计算机范围的设置在概念上归入 `system/`；用户级设置和 dotfiles 则归入 `home/`。这些目录会在有实际配置内容时加入仓库。关于配置边界和计划中的 WSL 工作，请参阅[架构说明](docs/architecture.md)。
+计算机范围的设置归入 `system/`；用户级设置和 dotfiles 则归入 `home/`。关于各层的职责边界，请参阅[架构说明](docs/architecture.md)。
 
 ## 脚本参考
 
 | 脚本 | 行为 |
 | --- | --- |
-| `scripts/check.ps1` | 根据 `.config/configuration.winget` 检查计算机状态 |
-| `scripts/apply.ps1` | 应用 WinGet 配置并接受其配置协议 |
+| `scripts/assert-prerequisites.ps1` | 要求 Windows 11、WinGet 1.11 或更高版本，以及 Windows WSL CLI |
+| `scripts/check.ps1` | 验证 WinGet 文档，并检查 WinGet/DSC 和 WSL 状态 |
+| `scripts/apply.ps1` | 验证并应用 WinGet/DSC 和 WSL 状态 |
 | `scripts/copy-local.ps1` | 将包括 `.config` 和 `.git` 在内的所有仓库内容复制到本地路径；使用 `-Clean` 时会完整替换目标目录 |
-| `scripts/bootstrap.ps1` | 检查 WinGet，必要时创建干净的本地执行副本，然后应用配置 |
+| `scripts/bootstrap.ps1` | 检查所有环境要求，必要时创建干净的本地执行副本，然后应用配置 |
 
 ## 安全与机密信息
 
